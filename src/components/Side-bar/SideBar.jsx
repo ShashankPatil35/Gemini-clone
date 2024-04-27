@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Sidebar.css";
 import { assets } from "../../assets/assets";
+import { Context } from "../../context/Context";
 
 function SideBar() {
   const [extended, setExtended] = useState(false);
+  const {onSent,prevPrompts,setRecentPrompt,newChat} = useContext(Context)
+
+  //
+  const loadPrompt = async(prompt)=>{
+    setRecentPrompt(prompt)
+    onSent(prompt)
+  }
+
 
   return (
     <div className="Sidebar">
       <div className="top">
         <img onClick={()=>setExtended(prev=>!prev)} className="menu" src={assets.menu_icon} alt="" />
-        <div className="new-chat">
+        <div onClick={()=>{newChat()}} className="new-chat">
           <img src={assets.plus_icon} alt="" />
           {/* //for side bar if extended is true then show side bar else hide it? */}
           {extended ? <p>New Chat</p> : null}
@@ -17,10 +26,15 @@ function SideBar() {
         {extended ? (
           <div className="recent">
             <p className="recent-title">Recent</p>
-            <div className="recent-entry">
-              <img src={assets.message_icon} alt="" />
-              <p>What is react..</p>
-            </div>
+            {prevPrompts.map((item,index)=>{
+              return (
+                 <div onClick={()=>loadPrompt(item)} className="recent-entry">
+                    <img src={assets.message_icon} alt="" />
+                     <p>{item.slice(0,18)}...</p>
+                </div>
+              )
+            })}
+            
           </div>
         ) : null}
       </div>
